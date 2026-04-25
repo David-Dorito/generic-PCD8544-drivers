@@ -44,8 +44,8 @@ void PCD8544::TogglePixelColor(uint8_t posX, uint8_t posY) {
 	PCD8544_TogglePixelColor(&this->handle, posX, posY);
 }
 
-void PCD8544::SetPixelColor(Color color, uint8_t posX, uint8_t posY) {
-	PCD8544_SetPixelColor(&this->handle, static_cast<uint8_t>(color), posX, posY);
+void PCD8544::SetPixelColor(uint8_t posX, uint8_t posY, Color color) {
+	PCD8544_SetPixelColor(&this->handle, posX, posY, static_cast<uint8_t>(color));
 }
 
 PCD8544::Color PCD8544::GetPixelColor(uint8_t posX, uint8_t posY) {
@@ -92,9 +92,9 @@ void PCD8544::TogglePixelColor(void* pSelf, uint8_t posX, uint8_t posY) {
 	PCD8544_TogglePixelColor(&static_cast<PCD8544*>(pSelf)->handle, posX, posY);
 }
 
-void PCD8544::SetPixelColor(void* pSelf, Color color, uint8_t posX, uint8_t posY) {
-	PCD8544_SetPixelColor(&static_cast<PCD8544*>(pSelf)->handle, static_cast<uint8_t>(color), posX,
-						  posY);
+void PCD8544::SetPixelColor(void* pSelf, uint8_t posX, uint8_t posY, Color color) {
+	PCD8544_SetPixelColor(&static_cast<PCD8544*>(pSelf)->handle, posX, posY,
+						  static_cast<uint8_t>(color));
 }
 
 PCD8544::Color PCD8544::GetPixelColor(void* pSelf, uint8_t posX, uint8_t posY) {

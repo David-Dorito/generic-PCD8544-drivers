@@ -63,7 +63,7 @@ class PCD8544 {
 	void  SetTempCoeff(TempCoeff coefficient);
 	void  SetContrast(uint8_t contrast);
 	void  TogglePixelColor(uint8_t posX, uint8_t posY);
-	void  SetPixelColor(Color color, uint8_t posX, uint8_t posY);
+	void  SetPixelColor(uint8_t posX, uint8_t posY, Color color);
 	Color GetPixelColor(uint8_t posX, uint8_t posY);
 	void  FillScreenColor(Color color);
 	void  UpdateScreen();
@@ -76,7 +76,7 @@ class PCD8544 {
 	static void	 SetTempCoeff(void* pSelf, TempCoeff coefficient);
 	static void	 SetContrast(void* pSelf, uint8_t contrast);
 	static void	 TogglePixelColor(void* pSelf, uint8_t posX, uint8_t posY);
-	static void	 SetPixelColor(void* pSelf, Color color, uint8_t posX, uint8_t posY);
+	static void	 SetPixelColor(void* pSelf, uint8_t posX, uint8_t posY, Color color);
 	static Color GetPixelColor(void* pSelf, uint8_t posX, uint8_t posY);
 	static void	 FillScreenColor(void* pSelf, Color color);
 	static void	 UpdateScreen(void* pSelf);

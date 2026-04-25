@@ -340,7 +340,7 @@ void PCD8544_TogglePixelColor(PCD8544_Handle* pPcd8544Handle, uint8_t posX, uint
   note: early returns nothing to avoid memory corruption if posX >= width or posY >= height
 
 \**************************************/
-void PCD8544_SetPixelColor(PCD8544_Handle* pPcd8544Handle, uint8_t isBlack, uint8_t posX, uint8_t posY) {
+void PCD8544_SetPixelColor(PCD8544_Handle* pPcd8544Handle, uint8_t posX, uint8_t posY, uint8_t isBlack) {
 	if (posX >= PCD8544_SCREEN_WIDTH || posY >= PCD8544_SCREEN_HEIGHT)
 		return;
 
