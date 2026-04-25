@@ -21,21 +21,30 @@
 #define PCD8544_CONTRAST_MIN	 0x00
 #define PCD8544_CONTRAST_MAX	 0x7F
 
+typedef enum PCD8544_Status {
+	PCD8544_OK,
+	PCD8544_ERROR,
+	PCD8544_BUSY,
+	PCD8544_TIMEOUT
+} PCD8544_Status;
+
 typedef struct PCD8544_Transport {
-	void (*SPI_Transmit)(void* pSpiHandle, uint8_t* pTxBuffer, uint16_t len);
-	void (*GPIO_WritePin)(void* pGpioHandle, uint8_t isEnabled);
+	PCD8544_Status (*SpiTransmit)(void* pSpiHandle, uint8_t* pTxBuffer, uint16_t len,
+								  uint32_t SpiTransmitTimeout);
+	void (*GpioWritePin)(void* pGpioHandle, uint8_t isEnabled);
 	void (*Delay)(uint32_t milliseconds);
 } PCD8544_Transport;
 
 typedef struct PCD8544_Handle {
 	uint8_t			   pFrameBuffer[PCD8544_SCREEN_SIZE];
-	void*			   pSpiHandle;
+	void*			   pSpi;
 	void*			   pDcPin;
 	void*			   pResPin;
 	void*			   pCsPin; // all of these are void* to be portable between different architectures
 	void*			   pLedPin;
 	void*			   pVccPin;
 	PCD8544_Transport* pTransport;
+	uint32_t		   SpiTransmitTimeout;
 } PCD8544_Handle;
 
 /*************************************\
@@ -46,12 +55,12 @@ typedef struct PCD8544_Handle {
   return:
 
   desc: turns the display on using the sequence described in the datasheet and sets some basic
-configurations
+		configurations
 
   note:
 
 \**************************************/
-void PCD8544_Init(PCD8544_Handle* pPcd8544Handle);
+PCD8544_Status PCD8544_Init(PCD8544_Handle* pPcd8544Handle);
 
 /*************************************\
   fn: @PCD8544_Deinit
@@ -96,7 +105,7 @@ void PCD8544_SetBacklight(PCD8544_Handle* pPcd8544Handle, uint8_t isEnabled);
 		so once you turn off sleep mode it will start displaying the image again
 
 \**************************************/
-void PCD8544_SetSleepMode(PCD8544_Handle* pPcd8544Handle, uint8_t isEnabled);
+PCD8544_Status PCD8544_SetSleepMode(PCD8544_Handle* pPcd8544Handle, uint8_t isEnabled);
 
 /*************************************\
   fn: @PCD8544_SetDisplayMode
@@ -109,10 +118,10 @@ void PCD8544_SetSleepMode(PCD8544_Handle* pPcd8544Handle, uint8_t isEnabled);
   desc: sets the mode of the display
 
   note: use the PCD8544_DISPLAYMODE_XXX macros as the mode arg, view the datasheet for a description of
-what they do
+		what they do
 
 \**************************************/
-void PCD8544_SetDisplayMode(PCD8544_Handle* pPcd8544Handle, uint8_t mode);
+PCD8544_Status PCD8544_SetDisplayMode(PCD8544_Handle* pPcd8544Handle, uint8_t mode);
 
 /*************************************\
   fn: @PCD8544_SetTempCoeff
@@ -128,7 +137,7 @@ void PCD8544_SetDisplayMode(PCD8544_Handle* pPcd8544Handle, uint8_t mode);
 of what they do
 
 \**************************************/
-void PCD8544_SetTempCoeff(PCD8544_Handle* pPcd8544Handle, uint8_t coefficient);
+PCD8544_Status PCD8544_SetTempCoeff(PCD8544_Handle* pPcd8544Handle, uint8_t coefficient);
 
 /*************************************\
   fn: @PCD8544_SetContrast
@@ -143,7 +152,7 @@ void PCD8544_SetTempCoeff(PCD8544_Handle* pPcd8544Handle, uint8_t coefficient);
   note:
 
 \**************************************/
-void PCD8544_SetContrast(PCD8544_Handle* pPcd8544Handle, uint8_t contrast);
+PCD8544_Status PCD8544_SetContrast(PCD8544_Handle* pPcd8544Handle, uint8_t contrast);
 
 /*************************************\
   fn: @PCD8544_TogglePixelColor
@@ -223,6 +232,6 @@ dont actually write to the display RAM, it just writes to the buffer in the hand
 whole buffer to the displays RAM
 
 \**************************************/
-void PCD8544_UpdateScreen(PCD8544_Handle* pPcd8544Handle);
+PCD8544_Status PCD8544_UpdateScreen(PCD8544_Handle* pPcd8544Handle);
 
 #endif

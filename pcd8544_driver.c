@@ -28,42 +28,88 @@ configurations
   note: sets the contrast to PCD8544_CONTRAST_DEFAULT found in the header file
 
 \**************************************/
-void PCD8544_Init(PCD8544_Handle* pPcd8544Handle) {
+PCD8544_Status PCD8544_Init(PCD8544_Handle* pPcd8544Handle) {
+	PCD8544_Status status = PCD8544_OK;
+
 	// Control VCC if user provides the pin, otherwise assume external 3.3V
 	if (pPcd8544Handle->pVccPin != NULL) {
-		pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pVccPin, HIGH);
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pVccPin, HIGH);
 		pPcd8544Handle->pTransport->Delay(10); // Wait for VCC to stabilize
 	}
 
 	// Reset sequence
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pResPin, LOW);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pResPin, LOW);
 	pPcd8544Handle->pTransport->Delay(1); // Min 100ns, 1ms is safe
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pResPin, HIGH);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pResPin, HIGH);
 	pPcd8544Handle->pTransport->Delay(50); // Wait for internal reset
 
 	// Send configuration commands
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pCsPin, LOW);
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pDcPin, LOW);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, LOW);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pDcPin, LOW);
 
 	uint8_t command = SET_EXTENDINST;
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &command, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &command, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		if (pPcd8544Handle->pVccPin != NULL)
+			pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pVccPin, LOW);
+		return status;
+	}
 
 	command = (SET_VOP | PCD8544_CONTRAST_DEFAULT);
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &command, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &command, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		if (pPcd8544Handle->pVccPin != NULL)
+			pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pVccPin, LOW);
+		return status;
+	}
 
 	command = SET_TC;
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &command, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &command, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		if (pPcd8544Handle->pVccPin != NULL)
+			pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pVccPin, LOW);
+		return status;
+	}
 
 	command = SET_BIAS_1_48;
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &command, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &command, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		if (pPcd8544Handle->pVccPin != NULL)
+			pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pVccPin, LOW);
+		return status;
+	}
 
 	command = SET_BASICINST;
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &command, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &command, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		if (pPcd8544Handle->pVccPin != NULL)
+			pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pVccPin, LOW);
+		return status;
+	}
 
 	command = PCD8544_DISPLAYMODE_NORMAL;
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &command, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &command, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		if (pPcd8544Handle->pVccPin != NULL)
+			pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pVccPin, LOW);
+		return status;
+	}
 
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pCsPin, HIGH);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+
+	return status;
 }
 
 /*************************************\
@@ -79,10 +125,12 @@ void PCD8544_Init(PCD8544_Handle* pPcd8544Handle) {
 
 \**************************************/
 void PCD8544_Deinit(PCD8544_Handle* pPcd8544Handle) {
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pCsPin, HIGH);
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pDcPin, LOW);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pDcPin, LOW);
+	if (pPcd8544Handle->pLedPin != NULL)
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pLedPin, LOW);
 	if (pPcd8544Handle->pVccPin != NULL)
-		pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pVccPin, LOW);
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pVccPin, LOW);
 }
 
 /*************************************\
@@ -95,11 +143,11 @@ void PCD8544_Deinit(PCD8544_Handle* pPcd8544Handle) {
 
   desc: enables or disables the background light of the display
 
-  note: function is very basic, just a wrapper for GPIO_WritePin() with the LED pin as the arg
+  note: function is very basic, just a wrapper for GpioWritePin() with the LED pin as the arg
 
 \**************************************/
 void PCD8544_SetBacklight(PCD8544_Handle* pPcd8544Handle, uint8_t isEnabled) {
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pLedPin, !isEnabled);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pLedPin, !isEnabled);
 }
 
 /*************************************\
@@ -116,18 +164,27 @@ void PCD8544_SetBacklight(PCD8544_Handle* pPcd8544Handle, uint8_t isEnabled) {
 		so once you turn off sleep mode it will start displaying the image again
 
 \**************************************/
-void PCD8544_SetSleepMode(PCD8544_Handle* pPcd8544Handle, uint8_t isEnabled) {
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pCsPin, LOW);
+PCD8544_Status PCD8544_SetSleepMode(PCD8544_Handle* pPcd8544Handle, uint8_t isEnabled) {
+	PCD8544_Status status = PCD8544_OK;
 
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pDcPin, LOW);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, LOW);
+
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pDcPin, LOW);
 	if (isEnabled)
 		isEnabled = SET_POWERDOWN;
 	else
 		isEnabled = SET_POWERUP;
 
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &isEnabled, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &isEnabled, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		return status;
+	}
 
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pCsPin, HIGH);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+
+	return status;
 }
 
 /*************************************\
@@ -144,14 +201,23 @@ void PCD8544_SetSleepMode(PCD8544_Handle* pPcd8544Handle, uint8_t isEnabled) {
 what they do
 
 \**************************************/
-void PCD8544_SetDisplayMode(PCD8544_Handle* pPcd8544Handle, uint8_t mode) {
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pCsPin, LOW);
+PCD8544_Status PCD8544_SetDisplayMode(PCD8544_Handle* pPcd8544Handle, uint8_t mode) {
+	PCD8544_Status status = PCD8544_OK;
 
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pDcPin, LOW);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, LOW);
+
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pDcPin, LOW);
 	mode &= (SET_DISPLAYMODE | 0b00000101);
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &mode, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &mode, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		return status;
+	}
 
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pCsPin, HIGH);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+
+	return status;
 }
 
 /*************************************\
@@ -168,14 +234,23 @@ void PCD8544_SetDisplayMode(PCD8544_Handle* pPcd8544Handle, uint8_t mode) {
 of what they do
 
 \**************************************/
-void PCD8544_SetTempCoeff(PCD8544_Handle* pPcd8544Handle, uint8_t coefficient) {
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pCsPin, LOW);
+PCD8544_Status PCD8544_SetTempCoeff(PCD8544_Handle* pPcd8544Handle, uint8_t coefficient) {
+	PCD8544_Status status = PCD8544_OK;
 
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pDcPin, LOW);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, LOW);
+
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pDcPin, LOW);
 	coefficient &= (SET_TC | 00000011);
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &coefficient, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &coefficient, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		return status;
+	}
 
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pCsPin, HIGH);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+
+	return status;
 }
 
 /*************************************\
@@ -191,21 +266,40 @@ void PCD8544_SetTempCoeff(PCD8544_Handle* pPcd8544Handle, uint8_t coefficient) {
   note:
 
 \**************************************/
-void PCD8544_SetContrast(PCD8544_Handle* pPcd8544Handle, uint8_t contrast) {
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pCsPin, LOW);
+PCD8544_Status PCD8544_SetContrast(PCD8544_Handle* pPcd8544Handle, uint8_t contrast) {
+	PCD8544_Status status = PCD8544_OK;
 
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pDcPin, LOW);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, LOW);
+
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pDcPin, LOW);
 
 	uint8_t command = SET_EXTENDINST;
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &command, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &command, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		return status;
+	}
 
 	command = (SET_VOP | contrast);
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &command, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &command, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		return status;
+	}
 
 	command = SET_BASICINST;
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &command, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &command, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		return status;
+	}
 
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pCsPin, HIGH);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+
+	return status;
 }
 
 /*************************************\
@@ -314,19 +408,39 @@ dont actually write to the display RAM, it just writes to the buffer in the hand
 whole buffer to the displays RAM
 
 \**************************************/
-void PCD8544_UpdateScreen(PCD8544_Handle* pPcd8544Handle) {
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pCsPin, LOW);
+PCD8544_Status PCD8544_UpdateScreen(PCD8544_Handle* pPcd8544Handle) {
+	PCD8544_Status status = PCD8544_OK;
 
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pDcPin, LOW);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, LOW);
+
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pDcPin, LOW);
 	uint8_t command = SET_XADDR_0;
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &command, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &command, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		return status;
+	}
+
 	command = SET_YADDR_0;
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, &command, 1);
+	status = pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, &command, 1,
+													 pPcd8544Handle->SpiTransmitTimeout);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		return status;
+	}
 
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pDcPin, HIGH);
-	pPcd8544Handle->pTransport->SPI_Transmit(pPcd8544Handle->pSpiHandle, pPcd8544Handle->pFrameBuffer,
-											 PCD8544_SCREEN_SIZE);
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pDcPin, LOW);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pDcPin, HIGH);
+	status =
+		pPcd8544Handle->pTransport->SpiTransmit(pPcd8544Handle->pSpi, pPcd8544Handle->pFrameBuffer,
+												PCD8544_SCREEN_SIZE, pPcd8544Handle->SpiTransmitTimeout);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pDcPin, LOW);
+	if (status != PCD8544_OK) {
+		pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+		return status;
+	}
 
-	pPcd8544Handle->pTransport->GPIO_WritePin(pPcd8544Handle->pCsPin, HIGH);
+	pPcd8544Handle->pTransport->GpioWritePin(pPcd8544Handle->pCsPin, HIGH);
+
+	return status;
 }

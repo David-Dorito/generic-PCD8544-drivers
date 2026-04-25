@@ -43,13 +43,14 @@ class PCD8544 {
 	using Handle = PCD8544_Handle;
 
 	struct Config {
-		void*	   pSpiHandle;
+		void*	   pSpi;
 		void*	   pDcPin;
 		void*	   pResPin;
 		void*	   pCsPin;
 		void*	   pLedPin;
 		void*	   pVccPin;
 		Transport* pTransport;
+		uint32_t   SpiTransmitTimeout;
 	};
 
 	PCD8544(Config config);

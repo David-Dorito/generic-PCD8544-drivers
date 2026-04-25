@@ -2,13 +2,14 @@
 #include "pcd8544_driver.h"
 
 PCD8544::PCD8544(Config config) {
-	this->handle.pSpiHandle = config.pSpiHandle;
+	this->handle.pSpi = config.pSpi;
 	this->handle.pDcPin = config.pDcPin;
 	this->handle.pResPin = config.pResPin;
 	this->handle.pCsPin = config.pCsPin;
 	this->handle.pLedPin = config.pLedPin;
 	this->handle.pVccPin = config.pVccPin;
 	this->handle.pTransport = config.pTransport;
+	this->handle.SpiTransmitTimeout = config.SpiTransmitTimeout;
 }
 
 void PCD8544::Init() {
