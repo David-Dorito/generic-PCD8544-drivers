@@ -29,8 +29,7 @@ typedef enum Pcd8544_Status {
 } Pcd8544_Status;
 
 typedef struct Pcd8544_PlatformDrivers {
-	Pcd8544_Status (*SpiTransmit)(void* pSpiHandle, uint8_t* pTxBuffer, uint16_t len,
-								  uint32_t SpiTransmitTimeout);
+	Pcd8544_Status (*SpiTransmit)(void* self, uint8_t* txBuffer, uint16_t len, uint32_t timeout);
 	void (*GpioWritePin)(void* pGpioHandle, uint8_t isEnabled);
 	void (*Delay)(uint32_t milliseconds);
 } Pcd8544_PlatformDrivers;
@@ -60,7 +59,7 @@ typedef struct Pcd8544_Handle {
   note:
 
 \**************************************/
-Pcd8544_Status Pcd8544_Init(Pcd8544_Handle* pcd8544Handle);
+Pcd8544_Status Pcd8544_Init(Pcd8544_Handle* self);
 
 /*************************************\
   fn: @PCD8544_Deinit
@@ -74,7 +73,7 @@ Pcd8544_Status Pcd8544_Init(Pcd8544_Handle* pcd8544Handle);
   note: also pulls chip select to HIGH and Data/Command to LOW
 
 \**************************************/
-void Pcd8544_Deinit(Pcd8544_Handle* pcd8544Handle);
+void Pcd8544_Deinit(Pcd8544_Handle* self);
 
 /*************************************\
   fn: @PCD8544_SetBacklight
@@ -89,7 +88,7 @@ void Pcd8544_Deinit(Pcd8544_Handle* pcd8544Handle);
   note: function is very basic, just a wrapper for GPIO_WritePin() with the LED pin as the arg
 
 \**************************************/
-void Pcd8544_SetBacklight(Pcd8544_Handle* pcd8544Handle, uint8_t isEnabled);
+void Pcd8544_SetBacklight(Pcd8544_Handle* self, uint8_t isEnabled);
 
 /*************************************\
   fn: @PCD8544_SetSleepMode
@@ -105,7 +104,7 @@ void Pcd8544_SetBacklight(Pcd8544_Handle* pcd8544Handle, uint8_t isEnabled);
 		so once you turn off sleep mode it will start displaying the image again
 
 \**************************************/
-Pcd8544_Status Pcd8544_SetSleepMode(Pcd8544_Handle* pcd8544Handle, uint8_t isEnabled);
+Pcd8544_Status Pcd8544_SetSleepMode(Pcd8544_Handle* self, uint8_t isEnabled);
 
 /*************************************\
   fn: @PCD8544_SetDisplayMode
@@ -121,7 +120,7 @@ Pcd8544_Status Pcd8544_SetSleepMode(Pcd8544_Handle* pcd8544Handle, uint8_t isEna
 		what they do
 
 \**************************************/
-Pcd8544_Status Pcd8544_SetDisplayMode(Pcd8544_Handle* pcd8544Handle, uint8_t mode);
+Pcd8544_Status Pcd8544_SetDisplayMode(Pcd8544_Handle* self, uint8_t mode);
 
 /*************************************\
   fn: @PCD8544_SetTempCoeff
@@ -137,7 +136,7 @@ Pcd8544_Status Pcd8544_SetDisplayMode(Pcd8544_Handle* pcd8544Handle, uint8_t mod
 of what they do
 
 \**************************************/
-Pcd8544_Status Pcd8544_SetTempCoeff(Pcd8544_Handle* pcd8544Handle, uint8_t coefficient);
+Pcd8544_Status Pcd8544_SetTempCoeff(Pcd8544_Handle* self, uint8_t coefficient);
 
 /*************************************\
   fn: @PCD8544_SetContrast
@@ -152,7 +151,7 @@ Pcd8544_Status Pcd8544_SetTempCoeff(Pcd8544_Handle* pcd8544Handle, uint8_t coeff
   note:
 
 \**************************************/
-Pcd8544_Status Pcd8544_SetContrast(Pcd8544_Handle* pcd8544Handle, uint8_t contrast);
+Pcd8544_Status Pcd8544_SetContrast(Pcd8544_Handle* self, uint8_t contrast);
 
 /*************************************\
   fn: @PCD8544_TogglePixelColor
@@ -168,7 +167,7 @@ Pcd8544_Status Pcd8544_SetContrast(Pcd8544_Handle* pcd8544Handle, uint8_t contra
   note: early returns nothing to avoid memory corruption if posX >= width or posY >= height
 
 \**************************************/
-void Pcd8544_TogglePixelColor(Pcd8544_Handle* pcd8544Handle, uint8_t posX, uint8_t posY);
+void Pcd8544_TogglePixelColor(Pcd8544_Handle* self, uint8_t posX, uint8_t posY);
 
 /*************************************\
   fn: @PCD8544_SetPixelColor
@@ -185,7 +184,7 @@ void Pcd8544_TogglePixelColor(Pcd8544_Handle* pcd8544Handle, uint8_t posX, uint8
   note: early returns nothing to avoid memory corruption if posX >= width or posY >= height
 
 \**************************************/
-void Pcd8544_SetPixelColor(Pcd8544_Handle* pcd8544Handle, uint8_t posX, uint8_t posY, uint8_t isBlack);
+void Pcd8544_SetPixelColor(Pcd8544_Handle* self, uint8_t posX, uint8_t posY, uint8_t isBlack);
 
 /*************************************\
   fn: @PCD8544_GetPixelColor
@@ -201,7 +200,7 @@ void Pcd8544_SetPixelColor(Pcd8544_Handle* pcd8544Handle, uint8_t posX, uint8_t 
   note: returns 0 if posX >= width or posY >= height to avoid memory corruption
 
 \**************************************/
-uint8_t Pcd8544_GetPixelColor(Pcd8544_Handle* pcd8544Handle, uint8_t posX, uint8_t posY);
+uint8_t Pcd8544_GetPixelColor(Pcd8544_Handle* self, uint8_t posX, uint8_t posY);
 
 /*************************************\
   fn: @PCD8544_FillScreenColor
@@ -216,7 +215,7 @@ uint8_t Pcd8544_GetPixelColor(Pcd8544_Handle* pcd8544Handle, uint8_t posX, uint8
   note:
 
 \**************************************/
-void Pcd8544_FillScreenColor(Pcd8544_Handle* pcd8544Handle, uint8_t isBlack);
+void Pcd8544_FillScreenColor(Pcd8544_Handle* self, uint8_t isBlack);
 
 /*************************************\
   fn: @PCD8544_UpdateScreen
@@ -232,6 +231,6 @@ void Pcd8544_FillScreenColor(Pcd8544_Handle* pcd8544Handle, uint8_t isBlack);
 		sets the whole buffer to the displays RAM
 
 \**************************************/
-Pcd8544_Status Pcd8544_UpdateScreen(Pcd8544_Handle* pcd8544Handle);
+Pcd8544_Status Pcd8544_UpdateScreen(Pcd8544_Handle* self);
 
 #endif
