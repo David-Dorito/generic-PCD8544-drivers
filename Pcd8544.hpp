@@ -9,11 +9,15 @@ extern "C" {
 class Pcd8544 {
   public:
 	struct Screen {
+		Screen() = delete;
+
 		static constexpr uint8_t  Width{PCD8544_SCREEN_WIDTH};
 		static constexpr uint8_t  Height{PCD8544_SCREEN_HEIGHT};
 		static constexpr uint16_t FrameBufferSize{PCD8544_SCREEN_SIZE};
 
 		struct Contrast {
+			Contrast() = delete;
+
 			static constexpr uint8_t Default{PCD8544_CONTRAST_DEFAULT};
 			static constexpr uint8_t Min{PCD8544_CONTRAST_MIN};
 			static constexpr uint8_t Max{PCD8544_CONTRAST_MAX};
