@@ -85,17 +85,17 @@ class Pcd8544 {
 	static void	 FillScreenColor(void* self, Color color);
 	static void	 UpdateScreen(void* self);
 
-	uint8_t* FrameBuffer() {
+	uint8_t* GetFrameBuffer() {
 		return this->handle.FrameBuffer;
 	}
-	void FrameBuffer(uint8_t* FrameBuffer) {
+	void SetFrameBuffer(uint8_t* FrameBuffer) {
 		memcpy(this->handle.FrameBuffer, FrameBuffer, Screen::FrameBufferSize);
 	}
 
-	static uint8_t* FrameBuffer(void* self) {
+	static uint8_t* GetFrameBuffer(void* self) {
 		return static_cast<Pcd8544*>(self)->handle.FrameBuffer;
 	}
-	static void FrameBuffer(void* self, uint8_t* FrameBuffer) {
+	static void SetFrameBuffer(void* self, uint8_t* FrameBuffer) {
 		memcpy(static_cast<Pcd8544*>(self)->handle.FrameBuffer, FrameBuffer, Screen::FrameBufferSize);
 	}
 
