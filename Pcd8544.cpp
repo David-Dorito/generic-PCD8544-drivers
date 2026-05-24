@@ -12,8 +12,8 @@ Pcd8544::Pcd8544(Config config) {
 	this->handle.SpiTransmitTimeout = config.SpiTransmitTimeout;
 }
 
-void Pcd8544::Init() {
-	Pcd8544_Init(&this->handle);
+Pcd8544::Status Pcd8544::Init() {
+	return Pcd8544_Init(&this->handle);
 }
 
 void Pcd8544::Deinit() {
@@ -24,20 +24,20 @@ void Pcd8544::SetBacklight(bool isEnabled) {
 	Pcd8544_SetBacklight(&this->handle, isEnabled);
 }
 
-void Pcd8544::SetSleepMode(bool isEnabled) {
-	Pcd8544_SetSleepMode(&this->handle, isEnabled);
+Pcd8544::Status Pcd8544::SetSleepMode(bool isEnabled) {
+	return Pcd8544_SetSleepMode(&this->handle, isEnabled);
 }
 
-void Pcd8544::SetDisplayMode(Screen::Mode displayMode) {
-	Pcd8544_SetDisplayMode(&this->handle, static_cast<uint8_t>(displayMode));
+Pcd8544::Status Pcd8544::SetDisplayMode(Screen::Mode displayMode) {
+	return Pcd8544_SetDisplayMode(&this->handle, static_cast<uint8_t>(displayMode));
 }
 
-void Pcd8544::SetTempCoeff(TempCoeff coefficient) {
-	Pcd8544_SetTempCoeff(&this->handle, static_cast<uint8_t>(coefficient));
+Pcd8544::Status Pcd8544::SetTempCoeff(TempCoeff coefficient) {
+	return Pcd8544_SetTempCoeff(&this->handle, static_cast<uint8_t>(coefficient));
 }
 
-void Pcd8544::SetContrast(uint8_t contrast) {
-	Pcd8544_SetContrast(&this->handle, contrast);
+Pcd8544::Status Pcd8544::SetContrast(uint8_t contrast) {
+	return Pcd8544_SetContrast(&this->handle, contrast);
 }
 
 void Pcd8544::TogglePixelColor(uint8_t posX, uint8_t posY) {
@@ -56,12 +56,12 @@ void Pcd8544::FillScreenColor(Color color) {
 	Pcd8544_FillScreenColor(&this->handle, static_cast<uint8_t>(color));
 }
 
-void Pcd8544::UpdateScreen() {
-	Pcd8544_UpdateScreen(&this->handle);
+Pcd8544::Status Pcd8544::UpdateScreen() {
+	return Pcd8544_UpdateScreen(&this->handle);
 }
 
-void Pcd8544::Init(void* self) {
-	Pcd8544_Init(&static_cast<Pcd8544*>(self)->handle);
+Pcd8544::Status Pcd8544::Init(void* self) {
+	return Pcd8544_Init(&static_cast<Pcd8544*>(self)->handle);
 }
 
 void Pcd8544::Deinit(void* self) {
@@ -72,20 +72,20 @@ void Pcd8544::SetBacklight(void* self, bool isEnabled) {
 	Pcd8544_SetBacklight(&static_cast<Pcd8544*>(self)->handle, isEnabled);
 }
 
-void Pcd8544::SetSleepMode(void* self, bool isEnabled) {
-	Pcd8544_SetSleepMode(&static_cast<Pcd8544*>(self)->handle, isEnabled);
+Pcd8544::Status Pcd8544::SetSleepMode(void* self, bool isEnabled) {
+	return Pcd8544_SetSleepMode(&static_cast<Pcd8544*>(self)->handle, isEnabled);
 }
 
-void Pcd8544::SetDisplayMode(void* self, Screen::Mode displayMode) {
-	Pcd8544_SetDisplayMode(&static_cast<Pcd8544*>(self)->handle, static_cast<uint8_t>(displayMode));
+Pcd8544::Status Pcd8544::SetDisplayMode(void* self, Screen::Mode displayMode) {
+	return Pcd8544_SetDisplayMode(&static_cast<Pcd8544*>(self)->handle, static_cast<uint8_t>(displayMode));
 }
 
-void Pcd8544::SetTempCoeff(void* self, TempCoeff coefficient) {
-	Pcd8544_SetTempCoeff(&static_cast<Pcd8544*>(self)->handle, static_cast<uint8_t>(coefficient));
+Pcd8544::Status Pcd8544::SetTempCoeff(void* self, TempCoeff coefficient) {
+	return Pcd8544_SetTempCoeff(&static_cast<Pcd8544*>(self)->handle, static_cast<uint8_t>(coefficient));
 }
 
-void Pcd8544::SetContrast(void* self, uint8_t contrast) {
-	Pcd8544_SetContrast(&static_cast<Pcd8544*>(self)->handle, contrast);
+Pcd8544::Status Pcd8544::SetContrast(void* self, uint8_t contrast) {
+	return Pcd8544_SetContrast(&static_cast<Pcd8544*>(self)->handle, contrast);
 }
 
 void Pcd8544::TogglePixelColor(void* self, uint8_t posX, uint8_t posY) {
@@ -104,6 +104,6 @@ void Pcd8544::FillScreenColor(void* self, Color color) {
 	Pcd8544_FillScreenColor(&static_cast<Pcd8544*>(self)->handle, static_cast<uint8_t>(color));
 }
 
-void Pcd8544::UpdateScreen(void* self) {
-	Pcd8544_UpdateScreen(&static_cast<Pcd8544*>(self)->handle);
+Pcd8544::Status Pcd8544::UpdateScreen(void* self) {
+	return Pcd8544_UpdateScreen(&static_cast<Pcd8544*>(self)->handle);
 }

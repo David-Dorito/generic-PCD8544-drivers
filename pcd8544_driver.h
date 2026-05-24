@@ -3,14 +3,14 @@
 
 #include <stdint.h>
 
-#define PCD8544_SCREEN_WIDTH  84
+#define PCD8544_SCREEN_WIDTH 84
 #define PCD8544_SCREEN_HEIGHT 48
-#define PCD8544_SCREEN_SIZE	  PCD8544_SCREEN_WIDTH*(PCD8544_SCREEN_HEIGHT / 8)
+#define PCD8544_SCREEN_SIZE PCD8544_SCREEN_WIDTH*(PCD8544_SCREEN_HEIGHT / 8)
 
-#define PCD8544_DISPLAYMODE_BLANK	 0b00001000
-#define PCD8544_DISPLAYMODE_NORMAL	 0b00001100
+#define PCD8544_DISPLAYMODE_BLANK 0b00001000
+#define PCD8544_DISPLAYMODE_NORMAL 0b00001100
 #define PCD8544_DISPLAYMODE_ALLSEGON 0b00001001
-#define PCD8544_DISPLAYMODE_INVERSE	 0b00001101
+#define PCD8544_DISPLAYMODE_INVERSE 0b00001101
 
 #define PCD8544_TEMPCOEFF_01MV 0b00000000
 #define PCD8544_TEMPCOEFF_09MV 0b00000001
@@ -18,8 +18,8 @@
 #define PCD8544_TEMPCOEFF_24MV 0b00000011
 
 #define PCD8544_CONTRAST_DEFAULT 0x3F
-#define PCD8544_CONTRAST_MIN	 0x00
-#define PCD8544_CONTRAST_MAX	 0x7F
+#define PCD8544_CONTRAST_MIN 0x00
+#define PCD8544_CONTRAST_MAX 0x7F
 
 typedef enum Pcd8544_Status {
 	PCD8544_OK,
@@ -30,20 +30,20 @@ typedef enum Pcd8544_Status {
 
 typedef struct Pcd8544_PlatformDrivers {
 	Pcd8544_Status (*SpiTransmit)(void* self, uint8_t* txBuffer, uint16_t len, uint32_t timeout);
-	void (*GpioWritePin)(void* pGpioHandle, uint8_t isEnabled);
+	void (*GpioWritePin)(void* self, uint8_t isEnabled);
 	void (*Delay)(uint32_t milliseconds);
 } Pcd8544_PlatformDrivers;
 
 typedef struct Pcd8544_Handle {
-	uint8_t					 FrameBuffer[PCD8544_SCREEN_SIZE];
-	void*					 Spi;
-	void*					 DcPin;
-	void*					 ResPin;
-	void*					 CsPin; // all are void* to be driver agnostic
-	void*					 LedPin;
-	void*					 VccPin;
+	uint8_t                  FrameBuffer[PCD8544_SCREEN_SIZE];
+	void*                    Spi;
+	void*                    DcPin;
+	void*                    ResPin;
+	void*                    CsPin; // all are void* to be driver agnostic
+	void*                    LedPin;
+	void*                    VccPin;
 	Pcd8544_PlatformDrivers* Drivers;
-	uint32_t				 SpiTransmitTimeout;
+	uint32_t                 SpiTransmitTimeout;
 } Pcd8544_Handle;
 
 /*************************************\
@@ -54,7 +54,7 @@ typedef struct Pcd8544_Handle {
   return:
 
   desc: turns the display on using the sequence described in the datasheet and sets some basic
-		configurations
+        configurations
 
   note:
 
@@ -101,7 +101,7 @@ void Pcd8544_SetBacklight(Pcd8544_Handle* self, uint8_t isEnabled);
   desc: enables or disables the sleep mode of the display
 
   note: display will stop displaying an image if turned on but RAM will NOT get cleared,
-		so once you turn off sleep mode it will start displaying the image again
+        so once you turn off sleep mode it will start displaying the image again
 
 \**************************************/
 Pcd8544_Status Pcd8544_SetSleepMode(Pcd8544_Handle* self, uint8_t isEnabled);
@@ -117,7 +117,7 @@ Pcd8544_Status Pcd8544_SetSleepMode(Pcd8544_Handle* self, uint8_t isEnabled);
   desc: sets the mode of the display
 
   note: use the PCD8544_DISPLAYMODE_XXX macros as the mode arg, view the datasheet for a description of
-		what they do
+        what they do
 
 \**************************************/
 Pcd8544_Status Pcd8544_SetDisplayMode(Pcd8544_Handle* self, uint8_t mode);
@@ -227,8 +227,8 @@ void Pcd8544_FillScreenColor(Pcd8544_Handle* self, uint8_t isBlack);
   desc: update the screen with the new changes
 
   note: the reason why you have to update the screen is because the other display screen drawing funcs
-		dont actually write to the display RAM, it just writes to the buffer in the handle and this func
-		sets the whole buffer to the displays RAM
+        dont actually write to the display RAM, it just writes to the buffer in the handle and this func
+        sets the whole buffer to the displays RAM
 
 \**************************************/
 Pcd8544_Status Pcd8544_UpdateScreen(Pcd8544_Handle* self);

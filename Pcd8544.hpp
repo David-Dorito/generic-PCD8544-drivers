@@ -45,45 +45,46 @@ class Pcd8544 {
 
 	using PlatformDrivers = Pcd8544_PlatformDrivers;
 	using Handle = Pcd8544_Handle;
+	using Status = Pcd8544_Status;
 
 	struct Config {
-		void*			 Spi;
-		void*			 DcPin;
-		void*			 ResPin;
-		void*			 CsPin;
-		void*			 LedPin;
-		void*			 VccPin;
+		void*            Spi;
+		void*            DcPin;
+		void*            ResPin;
+		void*            CsPin;
+		void*            LedPin;
+		void*            VccPin;
 		PlatformDrivers* Drivers;
-		uint32_t		 SpiTransmitTimeout;
+		uint32_t         SpiTransmitTimeout;
 	};
 
 	Pcd8544(Config config);
 
-	void  Init();
-	void  Deinit();
-	void  SetBacklight(bool isEnabled);
-	void  SetSleepMode(bool isEnabled);
-	void  SetDisplayMode(Screen::Mode displayMode);
-	void  SetTempCoeff(TempCoeff coefficient);
-	void  SetContrast(uint8_t contrast);
-	void  TogglePixelColor(uint8_t posX, uint8_t posY);
-	void  SetPixelColor(uint8_t posX, uint8_t posY, Color color);
-	Color GetPixelColor(uint8_t posX, uint8_t posY);
-	void  FillScreenColor(Color color);
-	void  UpdateScreen();
+	Status Init();
+	void   Deinit();
+	void   SetBacklight(bool isEnabled);
+	Status SetSleepMode(bool isEnabled);
+	Status SetDisplayMode(Screen::Mode displayMode);
+	Status SetTempCoeff(TempCoeff coefficient);
+	Status SetContrast(uint8_t contrast);
+	void   TogglePixelColor(uint8_t posX, uint8_t posY);
+	void   SetPixelColor(uint8_t posX, uint8_t posY, Color color);
+	Color  GetPixelColor(uint8_t posX, uint8_t posY);
+	void   FillScreenColor(Color color);
+	Status UpdateScreen();
 
-	static void	 Init(void* self);
-	static void	 Deinit(void* self);
-	static void	 SetBacklight(void* self, bool isEnabled);
-	static void	 SetSleepMode(void* self, bool isEnabled);
-	static void	 SetDisplayMode(void* self, Screen::Mode displayMode);
-	static void	 SetTempCoeff(void* self, TempCoeff coefficient);
-	static void	 SetContrast(void* self, uint8_t contrast);
-	static void	 TogglePixelColor(void* self, uint8_t posX, uint8_t posY);
-	static void	 SetPixelColor(void* self, uint8_t posX, uint8_t posY, Color color);
-	static Color GetPixelColor(void* self, uint8_t posX, uint8_t posY);
-	static void	 FillScreenColor(void* self, Color color);
-	static void	 UpdateScreen(void* self);
+	static Status Init(void* self);
+	static void   Deinit(void* self);
+	static void   SetBacklight(void* self, bool isEnabled);
+	static Status SetSleepMode(void* self, bool isEnabled);
+	static Status SetDisplayMode(void* self, Screen::Mode displayMode);
+	static Status SetTempCoeff(void* self, TempCoeff coefficient);
+	static Status SetContrast(void* self, uint8_t contrast);
+	static void   TogglePixelColor(void* self, uint8_t posX, uint8_t posY);
+	static void   SetPixelColor(void* self, uint8_t posX, uint8_t posY, Color color);
+	static Color  GetPixelColor(void* self, uint8_t posX, uint8_t posY);
+	static void   FillScreenColor(void* self, Color color);
+	static Status UpdateScreen(void* self);
 
 	uint8_t* GetFrameBuffer() {
 		return this->handle.FrameBuffer;
