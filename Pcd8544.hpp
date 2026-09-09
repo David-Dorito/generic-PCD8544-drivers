@@ -2,7 +2,6 @@
 #define PCD8544_HPP_
 
 extern "C" {
-#include <cstring>
 #include "pcd8544_driver.h"
 }
 
@@ -47,18 +46,7 @@ class Pcd8544 {
 	using Handle = Pcd8544_Handle;
 	using Status = Pcd8544_Status;
 
-	struct Config {
-		void*            Spi;
-		void*            DcPin;
-		void*            ResPin;
-		void*            CsPin;
-		void*            LedPin;
-		void*            VccPin;
-		PlatformDrivers* Drivers;
-		uint32_t         SpiTransmitTimeout;
-	};
-
-	Pcd8544(Config config);
+	Pcd8544(Handle handle);
 
 	Status Init();
 	void   Deinit();
@@ -90,14 +78,14 @@ class Pcd8544 {
 		return this->handle.FrameBuffer;
 	}
 	void SetFrameBuffer(uint8_t* FrameBuffer) {
-		memcpy(this->handle.FrameBuffer, FrameBuffer, Screen::FrameBufferSize);
+		this->handle.FrameBuffer = FrameBuffer;
 	}
 
 	static uint8_t* GetFrameBuffer(void* self) {
 		return static_cast<Pcd8544*>(self)->handle.FrameBuffer;
 	}
 	static void SetFrameBuffer(void* self, uint8_t* FrameBuffer) {
-		memcpy(static_cast<Pcd8544*>(self)->handle.FrameBuffer, FrameBuffer, Screen::FrameBufferSize);
+		static_cast<Pcd8544*>(self)->handle.FrameBuffer = FrameBuffer;
 	}
 
   private:

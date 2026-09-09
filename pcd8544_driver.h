@@ -35,7 +35,7 @@ typedef struct Pcd8544_PlatformDrivers {
 } Pcd8544_PlatformDrivers;
 
 typedef struct Pcd8544_Handle {
-	uint8_t                  FrameBuffer[PCD8544_SCREEN_SIZE];
+	uint8_t*                 FrameBuffer;
 	void*                    Spi;
 	void*                    DcPin;
 	void*                    ResPin;

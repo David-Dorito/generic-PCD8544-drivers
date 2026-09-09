@@ -1,15 +1,8 @@
 #include "Pcd8544.hpp"
 #include "pcd8544_driver.h"
 
-Pcd8544::Pcd8544(Config config) {
-	this->handle.Spi = config.Spi;
-	this->handle.DcPin = config.DcPin;
-	this->handle.ResPin = config.ResPin;
-	this->handle.CsPin = config.CsPin;
-	this->handle.LedPin = config.LedPin;
-	this->handle.VccPin = config.VccPin;
-	this->handle.Drivers = config.Drivers;
-	this->handle.SpiTransmitTimeout = config.SpiTransmitTimeout;
+Pcd8544::Pcd8544(Handle handle) {
+	this->handle = handle;
 }
 
 Pcd8544::Status Pcd8544::Init() {
